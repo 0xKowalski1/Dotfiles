@@ -29,6 +29,13 @@
   # Bluetooth unused on this TTY writing machine — off to save power.
   hardware.bluetooth.enable = false;
 
+  # Lock all VTs on suspend (lid close), so waking requires a password.
+  services.physlock = {
+    enable = true;
+    lockOn.suspend = true;
+    lockOn.hibernate = true;
+  };
+
   # Console readability (bare TTY): a larger font for the 1366x768 panel and
   # a 16-colour Catppuccin Mocha palette, so themes render through crisp,
   # high-contrast colours instead of the muddy kernel default. Index 0 is the
