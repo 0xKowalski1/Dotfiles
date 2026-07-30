@@ -29,6 +29,23 @@
   # Bluetooth unused on this TTY writing machine — off to save power.
   hardware.bluetooth.enable = false;
 
+  # Lock all VTs on suspend (lid close), so waking requires a password.
+  services.physlock = {
+    enable = true;
+    lockOn.suspend = true;
+    lockOn.hibernate = true;
+  };
+
+  # Brightness keys (Fn+F5/F6) on the bare TTY: no display server to catch
+  # them, so actkbd binds the keycodes directly and runs as root.
+  services.actkbd = {
+    enable = true;
+    bindings = [
+      { keys = [ 224 ]; events = [ "key" "rep" ]; command = "${pkgs.brightnessctl}/bin/brightnessctl set 5%-"; }
+      { keys = [ 225 ]; events = [ "key" "rep" ]; command = "${pkgs.brightnessctl}/bin/brightnessctl set 5%+"; }
+    ];
+  };
+
   # Console readability (bare TTY): a larger font for the 1366x768 panel and
   # a 16-colour Catppuccin Mocha palette, so themes render through crisp,
   # high-contrast colours instead of the muddy kernel default. Index 0 is the
