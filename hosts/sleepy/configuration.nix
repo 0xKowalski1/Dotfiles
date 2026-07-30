@@ -27,12 +27,10 @@
   services.ddclient = {
     enable = true;
     interval = "1min";
-    protocol = "cloudflare";
+    protocol = "duckdns";
     ssl = true;
-    username = "token";
     passwordFile = "/etc/nixos/ddns-token";
-    zone = "warsmite.com";
-    domains = [ "warsmite.com" ];
+    domains = [ "bigbingchilling.duckdns.org" ];
   };
 
   #environment.systemPackages = [

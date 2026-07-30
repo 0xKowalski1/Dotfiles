@@ -50,7 +50,7 @@
 
   # Homelab
   networking.extraHosts = ''
-    192.168.1.17 ace
+    192.168.1.19 ace
     192.168.1.69 dopey
     192.168.1.102 sleepy
     192.168.1.129 doc
