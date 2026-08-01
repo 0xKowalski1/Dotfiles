@@ -117,7 +117,7 @@
     # OpenRouter is selected by OPENROUTER_API_KEY in the secrets file.
     # Swap models later with `hermes model` — nix settings are merged into
     # config.yaml, not overwritten.
-    settings.model.default = "anthropic/claude-sonnet-4.6";
+    settings.model.default = "z-ai/glm-5.2";
 
     # Secrets live on the host, outside the repo and the nix store.
     # Missing file is skipped at activation, so first rebuild works before
