@@ -1,5 +1,6 @@
 {
   inputs,
+  pkgs,
   pkgs-unstable,
   ...
 }:
@@ -8,6 +9,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../common.nix
+    inputs.hermes-agent.nixosModules.default
     #inputs.gamejanitor.nixosModules.default
   ];
 
@@ -87,6 +89,40 @@
 
     # Default heap is 2G (-Xmx2048M -Xms2048M); override here if needed.
     # jvmOpts = "-Xmx4096M -Xms4096M";
+  };
+
+  # hermes's container mode enables docker; 25.11's default docker_28 is
+  # marked insecure (unmaintained since Nov 2025). Overlay rather than
+  # virtualisation.docker.package because the hermes module references
+  # pkgs.docker directly in its container preStart.
+  nixpkgs.overlays = [ (final: prev: { docker = final.docker_29; }) ];
+
+  # Hermes Agent — personal assistant gateway (Telegram + OpenRouter)
+  services.hermes-agent = {
+    enable = true;
+
+    # `messaging` variant: gateway + Telegram/Discord/Slack libs, but skips the
+    # web dashboard/TUI npm builds — hermes-web is broken upstream at this rev
+    # (npm ENOTCACHED on @nous-research/ui), and Telegram is the interface anyway.
+    package = inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.messaging;
+
+    # Agent tool execution happens inside an Ubuntu container (persistent
+    # writable layer); auto-enables virtualisation.docker.
+    container.enable = true;
+    # Shares ~/.hermes state with the gateway so `hermes` CLI on the host
+    # routes into the container.
+    container.hostUsers = [ "warsmite" ];
+    addToSystemPackages = true;
+
+    # OpenRouter is selected by OPENROUTER_API_KEY in the secrets file.
+    # Swap models later with `hermes model` — nix settings are merged into
+    # config.yaml, not overwritten.
+    settings.model.default = "anthropic/claude-sonnet-4.6";
+
+    # Secrets live on the host, outside the repo and the nix store.
+    # Missing file is skipped at activation, so first rebuild works before
+    # the keys are filled in.
+    environmentFiles = [ "/var/lib/hermes/env" ];
   };
 
   # User

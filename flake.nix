@@ -21,6 +21,10 @@
 
     claude-code.url = "github:sadjow/claude-code-nix";
 
+    # Pinned to a release tag — main's web/tui npm builds were broken
+    # (ENOTCACHED on @nous-research/ui) as of 2026-08-01
+    hermes-agent.url = "github:NousResearch/hermes-agent/v2026.7.30";
+
     nix-citizen.url = "github:LovingMelody/nix-citizen";
     nix-gaming.url = "github:fufexan/nix-gaming";
     nix-citizen.inputs.nix-gaming.follows = "nix-gaming";
