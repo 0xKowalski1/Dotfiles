@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   pkgs,
   pkgs-unstable,
   ...
@@ -117,13 +118,30 @@
     # OpenRouter is selected by OPENROUTER_API_KEY in the secrets file.
     # Swap models later with `hermes model` — nix settings are merged into
     # config.yaml, not overwritten.
-    settings.model.default = "z-ai/glm-5.2";
+    settings.model.default = "deepseek/deepseek-v4-flash-latest";
 
     # Secrets live on the host, outside the repo and the nix store.
     # Missing file is skipped at activation, so first rebuild works before
     # the keys are filled in.
     environmentFiles = [ "/var/lib/hermes/env" ];
   };
+
+  # Docker copies the host's /etc/resolv.conf into the container at start, and
+  # network-online.target does not guarantee resolvconf has written it yet (on
+  # the 2026-08-14 boot the nameservers landed 20s after the container started,
+  # leaving hermes with no DNS until its next restart). Wait for a nameserver
+  # line before starting; fail loudly so systemd retries instead of running a
+  # container that can't resolve anything.
+  systemd.services.hermes-agent.preStart = lib.mkBefore ''
+    for _ in $(seq 60); do
+      grep -q '^nameserver' /etc/resolv.conf && break
+      sleep 1
+    done
+    if ! grep -q '^nameserver' /etc/resolv.conf; then
+      echo "hermes-agent: no nameserver in /etc/resolv.conf after 60s; refusing to start container without DNS" >&2
+      exit 1
+    fi
+  '';
 
   # User
   users.users.warsmite = {
