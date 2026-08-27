@@ -100,6 +100,14 @@
       genericName = "Minecraft Launcher";
       comment = "A custom launcher for Minecraft";
     };
+    "com.moonlight_stream.Moonlight" = {
+      name = "Moonlight";
+      exec = "mullvad-exclude moonlight %U";
+      icon = "moonlight";
+      categories = [ "Game" ];
+      genericName = "Game Streaming Client";
+      comment = "Stream games from a Sunshine/GameStream host";
+    };
     discord = {
       name = "Discord";
       exec = "mullvad-exclude discord %U";

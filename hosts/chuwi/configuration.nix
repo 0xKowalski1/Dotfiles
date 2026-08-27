@@ -54,15 +54,12 @@
   };
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
-  # Autologin
+  # Login greeter (no autologin — require authentication at boot)
   services.greetd = {
     enable = true;
-    settings = rec {
-      initial_session = {
-        command = "hyprland";
-        user = "warsmite";
-      };
-      default_session = initial_session;
+    settings.default_session = {
+      command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd hyprland";
+      user = "greeter";
     };
   };
 
